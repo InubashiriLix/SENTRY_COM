@@ -209,6 +209,7 @@ ext_event_data_t *get_field_event_point(void);
 ext_referee_warning_t *get_referee_warning_point(void);
 ext_power_heat_data_t *get_power_heat_data_point(void);
 ext_game_robot_pos_t *get_game_robot_pos_point(void);
+void update_pos_position(float* pos);
 ext_shoot_data_t *get_shoot_data_point(void);
 ext_bullet_remaining_t *get_bullet_remaining_point(void);
 ext_game_robot_HP_t *get_game_robot_HP_point(void);

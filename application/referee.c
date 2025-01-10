@@ -203,6 +203,12 @@ ext_game_robot_pos_t *get_game_robot_pos_point(void)
 {
     return &game_robot_pos_t;
 }
+void update_pos_position(float* pos){
+    pos[0] = game_robot_pos_t.x;
+    pos[1] = game_robot_pos_t.y;
+    pos[2] = game_robot_pos_t.z;
+    pos[3] = game_robot_pos_t.yaw;
+}
 
 ext_shoot_data_t *get_shoot_data_point(void)
 {

@@ -75,11 +75,11 @@ void usb_task(void const *argument)
     osDelay(1000);
 
     while(1){
-        // for (int i = 0; i < 9; i++) {
-        //     projectile_tx_fast_update();
-        //     send_projectile_tx_fast();
-        //     vTaskDelay(10);
-        // }
+        for (int i = 0; i < 9; i++) {
+            projectile_tx_fast_update();
+            send_projectile_tx_fast();
+            vTaskDelay(10);
+        }
         projectile_tx_slow_update();
         send_projectile_tx_slow();
         vTaskDelay(10);
@@ -146,15 +146,6 @@ void vision_init()
 
 void projectile_tx_struct_init()
 {
-    // projectile_tx.header = 0X5A;
-    // const float *q_ = get_INS_quat_point();
-    // for (int i = 0; i < 4; i++){
-    //     projectile_tx.q[i] = *(q_ + i * sizeof(float));
-    // }
-    // projectile_tx.yaw = get_gimbal_point()->gimbal_yaw_motor.absolute_angle;
-    // projectile_tx.pitch = get_gimbal_point()->gimbal_pitch_motor.absolute_angle;
-    // // projectile_tx.timestamp = HAL_GetTick();
-    // projectile_tx.vision_mode = CLASSIC;
     projectile_tx_fast_update();
     projectile_tx_slow_update();
 }
@@ -214,93 +205,88 @@ static void vision_data_update()
 }
 
 static void projectile_tx_slow_update(){
-    projectile_tx_slow.header = 0X5A;
+    projectile_tx_slow.header = 0xA5;
 
     projectile_tx_slow.timestamp = xTaskGetTickCount();
 
     projectile_tx_slow.vision_mode = CLASSIC;
 
-    // projectile_tx.shoot_remote = rc_ctrl.mouse.press_r;
-    // projectile_tx.armor_color = 0;
+    projectile_tx_slow.shoot_remote = rc_ctrl.mouse.press_r;
+    projectile_tx_slow.armor_color = 0;
     // FIXME: what are the two things above?
     
 
     // // FIXME: since the current side is unkwown, who is the enermy is also unknown
     // // NOTE: the following code is a temporary solution on the assumption that the id of sentry is in the robot_id_t enum
     
-    // projectile_tx.current_side_color = get_robot_id() <= 7 ? 0 : 1;
-    // uint16_t* enemy_hp_ptr = (uint16_t*) get_game_robot_HP_point();
-    // for (int i = 0; i < 7; i ++) {
-    //     int j = projectile_tx.current_side_color == 0? i + 7 : i;
-    //     projectile_tx.enemy_hp[i] = *(enemy_hp_ptr + j * sizeof(uint16_t));
-    // }
+    projectile_tx_slow.current_side_color = get_robot_id() <= 7 ? 0 : 1;
+    uint16_t* enemy_hp_ptr = (uint16_t*) get_game_robot_HP_point();
+    for (int i = 0; i < 7; i ++) {
+        int j = projectile_tx_slow.current_side_color == 0? i + 7 : i;
+        projectile_tx_slow.enemy_hp[i] = *(enemy_hp_ptr + j * sizeof(uint16_t));
+    }
     
-
-    // projectile_tx.bullet_remaining_info[0] = get_bullet_remaining_point()->bullet_remaining_num;
+    projectile_tx_slow.bullet_remaining_info = get_bullet_remaining_point()->bullet_remaining_num;
     // // [0] for the 17mm bullet
 
-    // uint8_t *fieldevents_ptr = (uint8_t*) get_field_event_point();
-    // for (int i = 0; i < 10; i++) {
-    //     projectile_tx.field_events[i] = *(fieldevents_ptr + i * sizeof(uint8_t));
-    // }
+    uint8_t *fieldevents_ptr = (uint8_t*) get_field_event_point();
+    for (int i = 0; i < 10; i++) {
+        projectile_tx_slow.field_events[i] = *(fieldevents_ptr + i * sizeof(uint8_t));
+    }
 
-    // projectile_tx.game_type = get_game_state_point()->game_type;
-    // projectile_tx.game_progress = get_game_state_point()->game_progress;
-    // projectile_tx.state_remain_time = get_game_state_point()->stage_remain_time;
-    // // FIXME: the sync_time_stamp is not defined in the referee, but has been exists in the upper machine
-    // // projectile_tx.sync_time_stamp = get_game_state_point()->sync_time_stamp;
+    projectile_tx_slow.game_type = get_game_state_point()->game_type;
+    projectile_tx_slow.game_progress = get_game_state_point()->game_progress;
+    projectile_tx_slow.state_remain_time = get_game_state_point()->stage_remain_time;
+    // FIXME: the sync_time_stamp is not defined in the referee, but has been exists in the upper machine
+    // projectile_tx_slow.sync_time_stamp = get_game_state_point()->sync_time_stamp;
 
-    // projectile_tx.winner = get_game_result_point()->winner;
+    projectile_tx_slow.winner = get_game_result_point()->winner;
 
-    // // uint8_t *robot_buffs_ptr = (uint8_t*) get_game_robot_state_point();
-    // // FIXME: the robot buffers (robot_replenish_blood, shooter_cooling_acceleration, 
-    // // robot_defense_bonus, robot_attack_bonus) are not defined in the referee, 
-    // // but has been exists in the upper machine    
-    // // temporary solution
-    // memset(projectile_tx.robot_buffs, 0, sizeof(projectile_tx.robot_buffs));
+    // uint8_t *robot_buffs_ptr = (uint8_t*) get_game_robot_state_point();
+    // FIXME: the robot buffers (robot_replenish_blood, shooter_cooling_acceleration, 
+    // robot_defense_bonus, robot_attack_bonus) are not defined in the referee, 
+    // but has been exists in the upper machine    
+    // temporary solution
+    memset(projectile_tx_slow.robot_buffs, 0, sizeof(projectile_tx_slow.robot_buffs));
 
-    // float* robot_position_ptr = (float*) get_game_robot_pos_point();
-    // for (int i = 0; i < 4; i++){
-    //     projectile_tx.robot_position[i] = *(robot_position_ptr + i * sizeof(float));
-    // }
+    update_pos_position(projectile_tx_slow.robot_position);
 
-
-    // projectile_tx.robot_status_0[0] = get_robot_status_point()->robot_id;
-    // projectile_tx.robot_status_0[1] = get_robot_status_point()->robot_level;
-    // projectile_tx.robot_status_1[0] = get_robot_status_point()->remain_HP;
-    // projectile_tx.robot_status_1[1] = get_robot_status_point()->max_HP;
-    // projectile_tx.robot_status_1[2] = get_robot_status_point()->shooter_id1_17mm_cooling_rate;
-    // projectile_tx.robot_status_1[3] = get_robot_status_point()->shooter_id1_17mm_cooling_limit;
-    // projectile_tx.robot_status_1[4] = get_robot_status_point()->shooter_id1_17mm_speed_limit;
-    // projectile_tx.robot_status_1[5] = get_robot_status_point()->shooter_id2_17mm_cooling_rate;
-    // projectile_tx.robot_status_1[6] = get_robot_status_point()->shooter_id2_17mm_cooling_limit;
-    // projectile_tx.robot_status_1[7] = get_robot_status_point()->shooter_id2_17mm_speed_limit;
-    // projectile_tx.robot_status_1[8] = get_robot_status_point()->shooter_id1_42mm_cooling_rate;
-    // projectile_tx.robot_status_1[9] = get_robot_status_point()->shooter_id1_42mm_cooling_limit;
-    // projectile_tx.robot_status_1[10] = get_robot_status_point()->shooter_id1_42mm_speed_limit;
-    // projectile_tx.robot_status_1[11] = get_robot_status_point()->chassis_power_limit;
-    // projectile_tx.robot_status_1[12] = get_robot_status_point()->mains_power_gimbal_output;
-    // projectile_tx.robot_status_1[13] = get_robot_status_point()->mains_power_chassis_output;
-    // projectile_tx.robot_status_1[14] = get_robot_status_point()->mains_power_shooter_output;
+    projectile_tx_slow.robot_status_0[0] = get_robot_status_point()->robot_id;
+    projectile_tx_slow.robot_status_0[1] = get_robot_status_point()->robot_level;
+    projectile_tx_slow.robot_status_1[0] = get_robot_status_point()->remain_HP;
+    projectile_tx_slow.robot_status_1[1] = get_robot_status_point()->max_HP;
+    projectile_tx_slow.robot_status_1[2] = get_robot_status_point()->shooter_id1_17mm_cooling_rate;
+    projectile_tx_slow.robot_status_1[3] = get_robot_status_point()->shooter_id1_17mm_cooling_limit;
+    projectile_tx_slow.robot_status_1[4] = get_robot_status_point()->shooter_id1_17mm_speed_limit;
+    projectile_tx_slow.robot_status_1[5] = get_robot_status_point()->shooter_id2_17mm_cooling_rate;
+    projectile_tx_slow.robot_status_1[6] = get_robot_status_point()->shooter_id2_17mm_cooling_limit;
+    projectile_tx_slow.robot_status_1[7] = get_robot_status_point()->shooter_id2_17mm_speed_limit;
+    projectile_tx_slow.robot_status_1[8] = get_robot_status_point()->shooter_id1_42mm_cooling_rate;
+    projectile_tx_slow.robot_status_1[9] = get_robot_status_point()->shooter_id1_42mm_cooling_limit;
+    projectile_tx_slow.robot_status_1[10] = get_robot_status_point()->shooter_id1_42mm_speed_limit;
+    projectile_tx_slow.robot_status_1[11] = get_robot_status_point()->chassis_power_limit;
+    projectile_tx_slow.robot_status_1[12] = get_robot_status_point()->mains_power_gimbal_output;
+    projectile_tx_slow.robot_status_1[13] = get_robot_status_point()->mains_power_chassis_output;
+    projectile_tx_slow.robot_status_1[14] = get_robot_status_point()->mains_power_shooter_output;
 
     // // FIXME: the client command is not defined in the referee, but has been exists in the upper machine
     // // NOTE: temporarily set the command_target_position to (0, 0, 0)
-    // projectile_tx.command_target_position[0] = 0;
-    // projectile_tx.command_target_position[1] = 0;
-    // projectile_tx.command_target_position[2] = 0;
+    projectile_tx_slow.command_target_position[0] = 0;
+    projectile_tx_slow.command_target_position[1] = 0;
+    projectile_tx_slow.command_target_position[2] = 0;
 
     // // FIXME: IS there any need for the keyboard_key_pressed? We are dealing with SENTRY
-    // projectile_tx.keyboard_key_pressed = get_remote_control_point()->key.v;
+    projectile_tx_slow.keyboard_key_pressed = get_remote_control_point()->key.v;
 
     // // FIXME: where is the command_target_robot_id?
-    // projectile_tx.command_target_robot_id = 0;
+    projectile_tx_slow.command_target_robot_id = 0;
 
     // // FIXME: where is the receive_target_position?
-    // projectile_tx.receive_target_position[0] = 0;
-    // projectile_tx.receive_target_position[1] = 0;
+    projectile_tx_slow.receive_target_position[0] = 0;
+    projectile_tx_slow.receive_target_position[1] = 0;
 
     // // FIXME: where is the receive_target_robot_id?
-    // projectile_tx.receive_target_robot_id = 0;
+    projectile_tx_slow.receive_target_robot_id = 0;
 }
 
 static void projectile_tx_fast_update (void) 

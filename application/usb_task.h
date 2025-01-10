@@ -84,10 +84,11 @@ typedef struct ProjectileTx_slow
     uint16_t enemy_hp[6];
 
     // the bullet_remaining
-    uint16_t bullet_remaining_info[3];
+    uint16_t bullet_remaining_info;
     // 0 -> uint16_t remaining_17mm_num;
     // 1 -> uint16_t remaining_42mm_num;
     // 2 -> uint16_t remaining_coin_num;
+    // NOTE: the sentry has only 17mm bullet
 
     // field events
     uint8_t field_events[11];
