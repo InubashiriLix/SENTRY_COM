@@ -39,7 +39,7 @@ typedef enum
 typedef __packed struct
 {
 	uint8_t SOF;
-	uint8_t target_found;
+	uint8_t target_found; // it is renamed as the autofire in the motion_rx struct
 	fp32 pitch_angle;
 	fp32 yaw_angle;
 	uint8_t checksum;
@@ -69,12 +69,11 @@ typedef struct ProjectileTx_slow
     uint32_t timestamp;
 
     // NOTE: the mode can be set as any value you want
-    uint8_t vision_mode;
+    uint8_t vision_mode; // default -> CLASSIC 0, (WIND -> 1)
 
     // the gurgement part (coming from c borad)
     uint8_t shoot_remote;
-    uint8_t armor_color;
-    // TODO: WTF is the two things above
+    // TODO: WTF is the one things above
 
     // the current side color (which team we are)
     // 0 -> red
@@ -172,6 +171,8 @@ typedef struct __attribute__((packed)){
   float yaw;
   float pitch;
 
+  uint8_t lever_mode;  // SW_UP -> 1, SW_MID -> 0, SW_DOWN -> 2
+
   float bullet_speed;
 
   uint8_t checksum;
@@ -191,7 +192,7 @@ typedef struct MotionRx
     float linear_x;          // 第 24～31 位
     float linear_y;          // 第 28～35 位
     float angular_z;         // 第 32～39 位
-    uint8_t target_found;    // 第 41 位
+    uint8_t autofire;        // 第 41 位 the autofire is to tell the robot to fire
     uint8_t placeholder2;    // 第 42 位
     uint8_t placeholder3;    // 第 43 位
     uint8_t checksum;        // 第 44 位 (校验位)
@@ -213,11 +214,6 @@ static void send_projectile_tx_fast(void);
 
 uint8_t calculate_parity(const uint8_t *data, size_t length);
 uint8_t vertify_parity(const uint8_t *data, size_t length);
-uint16_t calculate_crc16(uint8_t *pchMessage, uint32_t dwLength, uint16_t wCRC);
-uint8_t Crc16Verify(uint8_t *pchMessage, uint32_t dwLength);
-uint8_t calculate_crc8(const uint8_t *data, uint16_t length, uint8_t init_value);
-uint8_t Crc8Vertify(uint8_t *data, uint32_t length);
-uint8_t Crc8Append(unsigned char* pchMessage, unsigned int dwLength);
 
 union refree_4_byte_t
 {

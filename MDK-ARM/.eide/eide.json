@@ -438,6 +438,24 @@
           },
           {
             "path": "../components/support/cpu_utils.c"
+          },
+          {
+            "path": "../components/support/cpu_utils.h"
+          },
+          {
+            "path": "../components/support/CRC8_CRC16.h"
+          },
+          {
+            "path": "../components/support/fifo.h"
+          },
+          {
+            "path": "../components/support/linux_list.h"
+          },
+          {
+            "path": "../components/support/macro_mutex.h"
+          },
+          {
+            "path": "../components/support/mem_mang.h"
           }
         ],
         "folders": []
@@ -646,7 +664,6 @@
           "../components/controller",
           "../Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
           "../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc",
-          ".cmsis/include",
           "RTE/_standard_robot"
         ],
         "libList": [],

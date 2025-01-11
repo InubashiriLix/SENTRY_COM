@@ -25,7 +25,8 @@
 /* USER CODE BEGIN INCLUDE */
 #include "FreeRTOS.h"
 #include "usb_task.h"
-#include "crc8_crc16.h"
+#include "CRC8_CRC16.h"
+// #include "crc8_crc16.h"
 #include "detect_task.h"
 /* USER CODE END INCLUDE */
 
@@ -37,7 +38,7 @@
 /* Private variables ---------------------------------------------------------*/
 extern vision_rx_t vision_rx;
 extern MotionRx_t motion_rx;
-extern uint8_t received_data[64];
+uint8_t received_data[64];
 extern RC_ctrl_t rc_ctrl;
 // uint8_t get_vision_state();
 /* USER CODE END PV */
@@ -294,12 +295,9 @@ static int8_t CDC_Receive_FS(uint8_t *Buf, uint32_t *Len)
         for (int i = 0; i < 44; i ++){
           received_data[i] = Buf[i];
         }
-        if (Crc8Vertify(received_data, rx_motion_size))
+        if (verify_CRC8_check_sum(received_data, rx_motion_size))
         {
           memcpy(&motion_rx, Buf, rx_motion_size);
-          // TODO: what the buf used for? where can I find the Buf there
-          memcpy(&motion_rx, received_data, rx_motion_size); // TODO: just for test // FIXME: BUG
-          // usb_printf("linear_x: %f\n", motion_rx.linear_x);
         }
       }
     }
@@ -346,9 +344,9 @@ uint8_t get_vision_state()
   {
     if (rc_ctrl.mouse.press_r)
     {
-      return 2; // ÕýÔÚ¸ú×Ù
+      return 2; // ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½
     }
-    return 1; // ÓÐÄ¿±êÎÞ¸ú×Ù
+    return 1; // ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½
   }
   else
   {
