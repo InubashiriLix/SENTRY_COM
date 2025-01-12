@@ -47,9 +47,12 @@ static void get_pitch_data(uint8_t array);
 
 vision_rx_t vision_rx;
 MotionRx_t motion_rx;
-// ProjectileTx_t projectile_tx;
 ProjectileTx_slow_t projectile_tx_slow;
 ProjectileTx_fast_t projectile_tx_fast;
+
+// border line of two sides
+const uint8_t borderline_side = 100;
+
 extern RC_ctrl_t rc_ctrl;
 void usb_task_(void const *argument)
 {
@@ -204,13 +207,29 @@ static void projectile_tx_slow_update(){
     projectile_tx_slow.vision_mode = CLASSIC;
 
     projectile_tx_slow.shoot_remote = rc_ctrl.mouse.press_r; // 我瞎写的, 记得弄清后改
-    // FIXME: what are the two things above?
+    // FIXME: what are the one things above?
     
 
-    // // FIXME: since the current side is unkwown, who is the enermy is also unknown
-    // // NOTE: the following code is a temporary solution on the assumption that the id of sentry is in the robot_id_t enum
-    
-    projectile_tx_slow.current_side_color = get_robot_id() <= 7 ? 1 : 2;
+    // due to the id of robot is
+    //  1：红方英雄机器人
+    //  2：红方工程机器人
+    //  3/4/5：红方步兵机器人（与机器人ID 3~5对应）
+    //  6：红方空中机器人
+    //  7：红方哨兵机器人
+    //  8：红方飞镖
+    //  9：红方雷达
+    //  10：红方前哨站
+    //  11：红方基地
+    //  101：蓝方英雄机器人
+    //  102：蓝方工程机器人
+    //  103/104/105：蓝方步兵机器人（与机器人ID 3~5对应）
+    //  106：蓝方空中机器人
+    //  107：蓝方哨兵机器人
+    //  108：蓝方飞镖
+    //  109：蓝方雷达
+    //  110：蓝方前哨站
+    //  111：蓝方基地
+    projectile_tx_slow.current_side_color = get_robot_id() < 100 ? 1 : 2;
     // 1 -> red  2 -> blue
     uint16_t* enemy_hp_ptr = (uint16_t*) get_game_robot_HP_point();
     for (int i = 0; i < 7; i ++) {
