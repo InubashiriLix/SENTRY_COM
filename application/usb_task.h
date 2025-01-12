@@ -76,8 +76,9 @@ typedef struct ProjectileTx_slow
     // TODO: WTF is the one things above
 
     // the current side color (which team we are)
-    // 0 -> red
-    // 1 -> blue
+    // 0 -> unknown
+    // 1 -> red
+    // 2 -> blue
     uint8_t current_side_color;
     // the enemt_hp
     uint16_t enemy_hp[6];

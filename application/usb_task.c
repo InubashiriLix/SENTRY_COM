@@ -229,8 +229,10 @@ static void projectile_tx_slow_update(){
     //  109：蓝方雷达
     //  110：蓝方前哨站
     //  111：蓝方基地
-    projectile_tx_slow.current_side_color = get_robot_id() < 100 ? 1 : 2;
-    // 1 -> red  2 -> blue
+    // 屎山三元计算
+    projectile_tx_slow.current_side_color = get_robot_id() == 0 ? 0 : 
+                                            get_robot_id() < 100 ? 1 : 2;
+    // 0 -> unknown  1 -> red  2 -> blue
     uint16_t* enemy_hp_ptr = (uint16_t*) get_game_robot_HP_point();
     for (int i = 0; i < 7; i ++) {
         int j;
