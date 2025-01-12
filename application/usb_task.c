@@ -316,7 +316,7 @@ static void projectile_tx_fast_update (void)
     projectile_tx_fast.yaw = get_gimbal_point()->gimbal_yaw_motor.absolute_angle;
     projectile_tx_fast.pitch = get_gimbal_point()->gimbal_pitch_motor.absolute_angle;
 
-    projectile_tx_fast.lever_mode = rc_ctrl.rc.s[1];
+    projectile_tx_fast.lever_mode = rc_ctrl.rc.s[0];
 
     projectile_tx_fast.bullet_speed = get_bullet_speed();
 }

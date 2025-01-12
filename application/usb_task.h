@@ -165,13 +165,16 @@ typedef struct ProjectileTx_slow
 } ProjectileTx_slow_t;
 
 typedef struct __attribute__((packed)){
-  uint8_t header;
+  uint8_t header; // 0xF8
   float q[4];
 
   float yaw;
   float pitch;
 
-  uint8_t lever_mode;  // SW_UP -> 1, SW_MID -> 0, SW_DOWN -> 2
+  uint8_t lever_mode; 
+  // #define RC_SW_UP                ((uint16_t)1)
+  // #define RC_SW_MID               ((uint16_t)3)
+  // #define RC_SW_DOWN              ((uint16_t)2)
 
   float bullet_speed;
 
@@ -198,12 +201,6 @@ typedef struct MotionRx
     uint8_t checksum;        // 第 44 位 (校验位)
 } MotionRx_t;
 // extern size_t MotionRxSize = sizeof(MotionRx_t);  
-
-// crc8, crc16 and parity vertification
-extern const char CRC8_INIT_;
-extern const char CRC8_TABLE[256];
-extern const uint16_t wCRC16_INIT;
-extern const uint16_t wCRC16_Table[256];
 
 void usb_task_(void const *argument);
 static void projectile_tx_struct_init(void);
